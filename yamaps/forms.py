@@ -33,7 +33,7 @@ class AddressWidget(forms.TextInput):
     def render(self, name, value, attrs=None, **kwargs):
 
         addr = {}
-        if isinstance(value, int):
+        if isinstance(value, int) or isinstance(value, long):
             addr = Address.objects.get(pk=value).as_dict()
         elif isinstance(value, dict):
             addr = value
@@ -52,7 +52,7 @@ class AddressWidget(forms.TextInput):
 
         for part in self.parts:
             elems.append(
-                '<input type="hidden" name="{}_{}" value="{}" />'.format(
+                u'<input type="hidden" name="{}_{}" value="{}" />'.format(
                     name, part, addr.get(part, "")
                 ))
 

@@ -7,7 +7,7 @@ class AddressPart(models.Model):
     class Meta:
         abstract = True
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 
@@ -17,19 +17,22 @@ class Country(AddressPart):
     class Meta:
         verbose_name_plural = "Countries"
 
+    def __unicode__(self):
+        return self.name
+
 
 class AdministrativeArea(AddressPart):
     country = models.ForeignKey(Country)
 
-    def __str__(self):
-        return "{}, {}".format(str(self.country), self.name)
+    def __unicode__(self):
+        return u'{}, {}'.format(str(self.country), self.name)
 
 
 class Locality(AddressPart):
     admin_area = models.ForeignKey(AdministrativeArea)
 
-    def __str__(self):
-        return "{}, {}".format(str(self.admin_area), self.name)
+    def __unicode__(self):
+        return u'{}, {}'.format(str(self.admin_area), self.name)
 
     class Meta:
         verbose_name_plural = "Localities"
@@ -38,8 +41,8 @@ class Locality(AddressPart):
 class Street(AddressPart):
     locality = models.ForeignKey(Locality)
 
-    def __str__(self):
-        return "{}, {}".format(str(self.locality), self.name)
+    def __unicode__(self):
+        return u'{}, {}'.format(str(self.locality), self.name)
 
 
 class AddressManager(models.Manager):
@@ -100,5 +103,5 @@ class Address(models.Model):
     class Meta:
         verbose_name_plural = "Addresses"
 
-    def __str__(self):
+    def __unicode__(self):
         return self.raw

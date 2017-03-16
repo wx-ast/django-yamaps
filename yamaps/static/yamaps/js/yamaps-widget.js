@@ -24,13 +24,13 @@
         for (var property in parts) {
             if (parts.hasOwnProperty(property)) {
                 var input = document.querySelector(
-                    'input[name="' + input_name + 
+                    'input[name="' + input_name +
                     "_" + property.toString() + '"]'
                 );
                 input.setAttribute("value", parts[property]);
             }
         }
- 
+
         if (parts) {
             raw.setAttribute("value", geobj.properties.get("text"));
             resizeRawAddressInput(raw);
@@ -56,8 +56,8 @@
             var raw = document.querySelector('input[name="' + name + '"]');
 
             var map = new ymaps.Map(name + "_map", {
-                center: [53.758768, 87.136731],
-                zoom: 12,
+                center: [55.160215, 61.402488],
+                zoom: 16,
                 controls: ["zoomControl", "fullscreenControl", "searchControl"]
             });
 
