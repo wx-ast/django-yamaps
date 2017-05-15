@@ -1,15 +1,21 @@
 (function () {
     function setAddress(input_name, geobj, raw) {
-
-
         var coords = geobj.geometry.getCoordinates();
         var addrDetails = geobj.properties.get("metaDataProperty.GeocoderMetaData.AddressDetails");
 
         var countryName = addrDetails.Country.CountryName;
         var adminAreaName = addrDetails.Country.AdministrativeArea.AdministrativeAreaName;
-        var localityName = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName;
-        var streetName = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
-        var houseNumber = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.Premise.PremiseNumber;
+        var localityName = '', streetName = '', houseNumber = '';
+
+        if (typeof addrDetails.Country.AdministrativeArea.SubAdministrativeArea !== 'undefined') {
+            localityName = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName;
+            streetName = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
+            houseNumber = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.Premise.PremiseNumber;
+        } else {
+            localityName = addrDetails.Country.AdministrativeArea.Locality.LocalityName;
+            streetName = addrDetails.Country.AdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
+            houseNumber = addrDetails.Country.AdministrativeArea.Locality.Thoroughfare.Premise.PremiseNumber
+        }
 
         var parts = {
             "latitude": coords[0],
