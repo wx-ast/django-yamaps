@@ -6,15 +6,25 @@
         var countryName = addrDetails.Country.CountryName;
         var adminAreaName = addrDetails.Country.AdministrativeArea.AdministrativeAreaName;
         var localityName = '', streetName = '', houseNumber = '';
+        var o = {};
 
         if (typeof addrDetails.Country.AdministrativeArea.SubAdministrativeArea !== 'undefined') {
-            localityName = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName;
-            streetName = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
-            houseNumber = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.Thoroughfare.Premise.PremiseNumber;
+            if (addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.DependentLocality !== 'undefined') {
+                o = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality;
+                localityName = o.LocalityName;
+                streetName = o.DependentLocality.DependentLocality.Thoroughfare.ThoroughfareName;
+                houseNumber = o.DependentLocality.DependentLocality.Thoroughfare.Premise.PremiseNumber;
+            } else {
+                o = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality;
+                localityName = o.LocalityName;
+                streetName = o.Thoroughfare.ThoroughfareName;
+                houseNumber = o.Thoroughfare.Premise.PremiseNumber;
+            }
         } else {
-            localityName = addrDetails.Country.AdministrativeArea.Locality.LocalityName;
-            streetName = addrDetails.Country.AdministrativeArea.Locality.Thoroughfare.ThoroughfareName;
-            houseNumber = addrDetails.Country.AdministrativeArea.Locality.Thoroughfare.Premise.PremiseNumber
+            o = addrDetails.Country.AdministrativeArea.Locality;
+            localityName = o.LocalityName;
+            streetName = o.Thoroughfare.ThoroughfareName;
+            houseNumber = o.Thoroughfare.Premise.PremiseNumber
         }
 
         var parts = {
@@ -26,6 +36,7 @@
             "street": streetName,
             "house": houseNumber
         };
+        console.log(parts);
 
         for (var property in parts) {
             if (parts.hasOwnProperty(property)) {
