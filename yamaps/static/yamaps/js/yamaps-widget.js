@@ -2,50 +2,40 @@
     function setAddress(input_name, geobj, raw) {
         var coords = geobj.geometry.getCoordinates();
         var addrDetails = geobj.properties.get("metaDataProperty.GeocoderMetaData.AddressDetails");
+        var addressComponents = geobj.properties.get("metaDataProperty.GeocoderMetaData.Address.Components");
 
-        var countryName = addrDetails.Country.CountryName;
         var adminAreaName = addrDetails.Country.AdministrativeArea.AdministrativeAreaName;
-        var localityName = '', streetName = '', houseNumber = '';
-        var o = {};
 
-        if (typeof addrDetails.Country.AdministrativeArea.SubAdministrativeArea !== 'undefined') {
-            if (addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.DependentLocality !== 'undefined') {
-                o = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality;
-                localityName = o.LocalityName;
-                streetName = o.DependentLocality.DependentLocality.Thoroughfare.ThoroughfareName;
-                houseNumber = o.DependentLocality.DependentLocality.Thoroughfare.Premise.PremiseNumber;
-            } else {
-                o = addrDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality;
-                localityName = o.LocalityName;
-                streetName = o.Thoroughfare.ThoroughfareName;
-                houseNumber = o.Thoroughfare.Premise.PremiseNumber;
+        var i, val;
+        var parts = {};
+        parts['latitude'] = coords[0];
+        parts['longitude'] = coords[1];
+        parts['admin_area'] = adminAreaName;
+        var input;
+
+        for (i=0; i < addressComponents.length; i++) {
+            val = addressComponents[i];
+
+            input = document.querySelector(
+                'input[name="' + input_name +
+                "_" + val.kind + '"]'
+            );
+
+            if (input != null) {
+                input.setAttribute("value", val.name);
             }
-        } else {
-            o = addrDetails.Country.AdministrativeArea.Locality;
-            localityName = o.LocalityName;
-            streetName = o.Thoroughfare.ThoroughfareName;
-            houseNumber = o.Thoroughfare.Premise.PremiseNumber
         }
 
-        var parts = {
-            "latitude": coords[0],
-            "longitude": coords[1],
-            "country": countryName,
-            "admin_area": adminAreaName,
-            "locality": localityName,
-            "street": streetName,
-            "house": houseNumber
-        };
-        console.log(parts);
-
         for (var property in parts) {
-            if (parts.hasOwnProperty(property)) {
-                var input = document.querySelector(
+            // if (parts.hasOwnProperty(property)) {
+                input = document.querySelector(
                     'input[name="' + input_name +
                     "_" + property.toString() + '"]'
                 );
-                input.setAttribute("value", parts[property]);
-            }
+                if (input != null) {
+                    input.setAttribute("value", parts[property]);
+                }
+            // }
         }
 
         if (parts) {
