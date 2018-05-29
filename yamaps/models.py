@@ -22,14 +22,14 @@ class Country(AddressPart):
 
 
 class AdministrativeArea(AddressPart):
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(Country, models.CASCADE)
 
     def __unicode__(self):
         return u'{}, {}'.format(str(self.country), self.name)
 
 
 class Locality(AddressPart):
-    admin_area = models.ForeignKey(AdministrativeArea)
+    admin_area = models.ForeignKey(AdministrativeArea, models.CASCADE)
 
     def __unicode__(self):
         return u'{}, {}'.format(str(self.admin_area), self.name)
@@ -39,7 +39,7 @@ class Locality(AddressPart):
 
 
 class Street(AddressPart):
-    locality = models.ForeignKey(Locality)
+    locality = models.ForeignKey(Locality, models.CASCADE)
 
     def __unicode__(self):
         return u'{}, {}'.format(str(self.locality), self.name)
@@ -80,7 +80,7 @@ class AddressManager(models.Manager):
 
 class Address(models.Model):
     raw = models.CharField(max_length=300)
-    street = models.ForeignKey(Street)
+    street = models.ForeignKey(Street, models.CASCADE)
     house = models.CharField(max_length=20)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
