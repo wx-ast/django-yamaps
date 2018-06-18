@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.apps import apps
+from django.utils.html import escape
 
 
 from .settings import YAMAPS_ADDRESS_MODEL
@@ -39,6 +40,8 @@ class AddressWidget(forms.TextInput):
 
         raw_address = ""
 
+        json_value = ''
+
         if isinstance(value, int):
             addr_model = apps.get_model(YAMAPS_ADDRESS_MODEL)
             value = addr_model.objects.get(pk=value)
@@ -51,10 +54,10 @@ class AddressWidget(forms.TextInput):
 
         widget = """{old}
 <div id="{name}_components">
-<input type="hidden" name="{name}_json"/>
+<input type="hidden" name="{name}_json" value="{json}" />
 <div id="{name}_map" style="width: 700px; height: 500px;"></div>
 </div>
-        """.format(old=text_input, name=name)
+        """.format(old=text_input, name=name, json=escape(value.json))
 
         return mark_safe(widget)
 

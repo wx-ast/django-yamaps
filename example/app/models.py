@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 
@@ -66,6 +68,12 @@ class AddressManager(models.Manager):
 
         house = raw_street["Premise"]["PremiseNumber"]
 
+        def my_default(obj):
+            if isinstance(obj, Decimal):
+                return float(obj)
+            return str(obj)
+        json_data = json.dumps(data, ensure_ascii=False, default=my_default)
+
         addr, _ = self.get_or_create(
             raw=data.get("raw"),
             street=street,
@@ -77,6 +85,7 @@ class AddressManager(models.Manager):
 
 
 class Address(models.Model):
+    json=json_data,
     raw = models.CharField(max_length=300)
     street = models.ForeignKey(Street)
     house = models.CharField(max_length=20)
