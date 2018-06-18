@@ -2,57 +2,25 @@
     function setAddress(input_name, geobj, raw) {
         var coords = geobj.geometry.getCoordinates();
         var addrDetails = geobj.properties.get("metaDataProperty.GeocoderMetaData.AddressDetails");
-        var addressComponents = geobj.properties.get("metaDataProperty.GeocoderMetaData.Address.Components");
 
-        var adminAreaName = addrDetails.Country.AdministrativeArea.AdministrativeAreaName;
+        addrDetails.latitude = coords[0];
+        addrDetails.longitude = coords[1];
 
-        var i, val;
-        var parts = {};
-        parts['latitude'] = coords[0];
-        parts['longitude'] = coords[1];
-        parts['admin_area'] = adminAreaName;
-        var input;
+        var selector = 'input[name="' + input_name + '_json"]';
+        var jsonInput = document.querySelector(selector);
 
-        for (i=0; i < addressComponents.length; i++) {
-            val = addressComponents[i];
+        jsonInput.setAttribute("value", JSON.stringify(addrDetails));
 
-            input = document.querySelector(
-                'input[name="' + input_name +
-                "_" + val.kind + '"]'
-            );
-
-            if (input != null) {
-                input.setAttribute("value", val.name);
-            }
-        }
-
-        for (var property in parts) {
-            // if (parts.hasOwnProperty(property)) {
-                input = document.querySelector(
-                    'input[name="' + input_name +
-                    "_" + property.toString() + '"]'
-                );
-                if (input != null) {
-                    input.setAttribute("value", parts[property]);
-                }
-            // }
-        }
-
-        if (parts) {
-            raw.setAttribute("value", geobj.properties.get("text"));
-            resizeRawAddressInput(raw);
-        }
+        var raw_address = geobj.properties.get("text");
+        raw.setAttribute("value", raw_address);
+        raw.setAttribute("size", raw_address.length);
     }
 
-    function updateAddress(coords, name, raw) {
+    function setAddressFromCoords(coords, name, raw) {
         ymaps.geocode(coords).then(function (res) {
             var firstGeoObject = res.geoObjects.get(0);
             setAddress(name, firstGeoObject, raw);
         });
-    }
-
-    function resizeRawAddressInput(input) {
-        input.setAttribute("size", input.getAttribute("value").length);
     }
 
     function init() {
@@ -63,8 +31,8 @@
             var raw = document.querySelector('input[name="' + name + '"]');
 
             var map = new ymaps.Map(name + "_map", {
-                center: [55.160215, 61.402488],
-                zoom: 16,
+                center: [53.758768, 87.136731],
+                zoom: 12,
                 controls: ["zoomControl", "fullscreenControl", "searchControl"]
             });
 
@@ -98,13 +66,13 @@
                     map.geoObjects.add(placemark);
 
                     placemark.events.add('dragend', function () {
-                        updateAddress(placemark.geometry.getCoordinates(), name);
+                        setAddressFromCoords(placemark.geometry.getCoordinates(), name);
                     });
                 }
-                updateAddress(coords, name, raw);
+
+                setAddressFromCoords(coords, name, raw);
             });
         });
     }
-
     ymaps.ready(init);
 })();
