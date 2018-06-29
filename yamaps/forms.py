@@ -52,12 +52,16 @@ class AddressWidget(forms.TextInput):
 
         text_input = super().render(name, raw_address, attrs, **kwargs)
 
+        if value and value.json:
+            json_value = escape(value.json)
+
+
         widget = """{old}
 <div id="{name}_components">
 <input type="hidden" name="{name}_json" value="{json}" />
 <div id="{name}_map" style="width: 700px; height: 500px;"></div>
 </div>
-        """.format(old=text_input, name=name, json=escape(value.json))
+        """.format(old=text_input, name=name, json=json_value)
 
         return mark_safe(widget)
 
